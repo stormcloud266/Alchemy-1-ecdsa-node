@@ -1,6 +1,7 @@
 import server from "./server";
+import { ACCOUNTS } from "./FakeWallet";
 
-function Wallet({ address, setAddress, balance, setBalance }) {
+function Wallet({ setAddress, balance, setBalance }) {
   async function onChange(evt) {
     const address = evt.target.value;
     setAddress(address);
@@ -20,7 +21,14 @@ function Wallet({ address, setAddress, balance, setBalance }) {
 
       <label>
         Wallet Address
-        <input placeholder="Type an address, for example: 0x1" value={address} onChange={onChange}></input>
+        <select onChange={onChange}>
+          <option value="">Please choose an account</option>
+          {ACCOUNTS.map((publicKey) => (
+            <option value={publicKey} key={publicKey}>
+              {publicKey.slice(0, 8)}
+            </option>
+          ))}
+        </select>
       </label>
 
       <div className="balance">Balance: {balance}</div>

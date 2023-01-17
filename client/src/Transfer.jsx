@@ -1,5 +1,6 @@
 import { useState } from "react";
 import server from "./server";
+import { ACCOUNTS, WALLETS, signMessage } from "./FakeWallet";
 
 function Transfer({ address, setBalance }) {
   const [sendAmount, setSendAmount] = useState("");
@@ -9,7 +10,10 @@ function Transfer({ address, setBalance }) {
 
   async function transfer(evt) {
     evt.preventDefault();
-
+    const signature = await signMessage(
+      "sending",
+      WALLETS.find(({ publicKey }) => publicKey === address).privateKey
+    );
     try {
       const {
         data: { balance },
@@ -17,6 +21,7 @@ function Transfer({ address, setBalance }) {
         sender: address,
         amount: parseInt(sendAmount),
         recipient,
+        signature,
       });
       setBalance(balance);
     } catch (ex) {
@@ -39,11 +44,14 @@ function Transfer({ address, setBalance }) {
 
       <label>
         Recipient
-        <input
-          placeholder="Type an address, for example: 0x2"
-          value={recipient}
-          onChange={setValue(setRecipient)}
-        ></input>
+        <select onChange={setValue(setRecipient)}>
+          <option value="">Please choose an account</option>
+          {ACCOUNTS.map((publicKey) => (
+            <option value={publicKey} key={publicKey}>
+              {publicKey.slice(0, 8)}
+            </option>
+          ))}
+        </select>
       </label>
 
       <input type="submit" className="button" value="Transfer" />

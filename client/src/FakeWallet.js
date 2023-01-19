@@ -30,9 +30,18 @@ export const hashMessage = (msg) => {
   return keccak256(utf8ToBytes(msg));
 };
 
-export const signMessage = async (msg, privateKey) => {
-  const sig = await secp.sign(hashMessage(msg), privateKey, {
+export const signMessage = async (message, privateKey) => {
+  // const [sig, recoveryBit] = await secp.sign(hashMessage(msg), privateKey, {
+  //   recovered: true,
+  // });
+  // const signature = new Uint8Array([recoveryBit, ...sig]);
+  // return toHex(signature);
+
+  const hash = hashMessage(message);
+
+  const [signature, recoveryBit] = await secp.sign(hash, privateKey, {
     recovered: true,
   });
-  return sig;
+  const fullSignature = new Uint8Array([recoveryBit, ...signature]);
+  return toHex(fullSignature);
 };

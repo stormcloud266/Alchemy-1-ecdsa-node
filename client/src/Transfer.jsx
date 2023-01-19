@@ -10,10 +10,12 @@ function Transfer({ address, setBalance }) {
 
   async function transfer(evt) {
     evt.preventDefault();
+
     const signature = await signMessage(
       "sending",
       WALLETS.find(({ publicKey }) => publicKey === address).privateKey
     );
+
     try {
       const {
         data: { balance },
@@ -25,7 +27,7 @@ function Transfer({ address, setBalance }) {
       });
       setBalance(balance);
     } catch (ex) {
-      alert(ex.response.data.message);
+      console.log(ex);
     }
   }
 

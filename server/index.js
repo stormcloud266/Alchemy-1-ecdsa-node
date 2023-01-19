@@ -58,7 +58,6 @@ app.get("/balance/:address", (req, res) => {
 
 app.post("/send", async (req, res) => {
   const { recipient, amount, signature } = req.body;
-  // const [sig, recoveryBit] = signature;
 
   const sender = await recoverKey("sending", signature);
 

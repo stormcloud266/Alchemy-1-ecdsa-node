@@ -20,8 +20,9 @@ async function recoverKey(message, signature) {
   const fullSignatureBytes = hexToBytes(signature);
   const recoveryBit = fullSignatureBytes[0];
   const signatureBytes = fullSignatureBytes.slice(1);
+  const pub = await secp.recoverPublicKey(hash, signatureBytes, recoveryBit);
 
-  return await secp.recoverPublicKey(hash, signatureBytes, recoveryBit);
+  return toHex(pub);
 
   // const fullSignatureBytes = hexToBytes(signature);
 
@@ -56,12 +57,11 @@ app.get("/balance/:address", (req, res) => {
 });
 
 app.post("/send", async (req, res) => {
-  const { sender, recipient, amount, signature } = req.body;
+  const { recipient, amount, signature } = req.body;
   // const [sig, recoveryBit] = signature;
 
-  const pub = await recoverKey("sending", signature);
-  console.log("pub: ", toHex(pub));
-  // console.log("hello");
+  const sender = await recoverKey("sending", signature);
+
   setInitialBalance(sender);
   setInitialBalance(recipient);
 

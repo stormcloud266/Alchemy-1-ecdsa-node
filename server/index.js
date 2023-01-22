@@ -17,32 +17,15 @@ const hashMessage = (msg) => keccak256(utf8ToBytes(msg));
 
 async function recoverKey(message, signature) {
   const hash = hashMessage(message);
-  const fullSignatureBytes = hexToBytes(signature);
-  const recoveryBit = fullSignatureBytes[0];
-  const signatureBytes = fullSignatureBytes.slice(1);
-  const pub = await secp.recoverPublicKey(hash, signatureBytes, recoveryBit);
+  const signatureBytes = hexToBytes(signature);
+  const publicKey = await secp.recoverPublicKey(
+    hash,
+    signatureBytes.slice(1),
+    signatureBytes[0]
+  );
 
-  return toHex(pub);
-
-  // const fullSignatureBytes = hexToBytes(signature);
-
-  // const pub = await secp.recoverPublicKey(
-  //   hashMessage(message),
-  //   fullSignatureBytes.slice(1),
-  //   fullSignatureBytes[0]
-  // );
-
-  // return toHex(pub);
+  return toHex(publicKey);
 }
-
-const signatureToPubKey = (message, signature) => {
-  const hash = hashMessage(message);
-  const fullSignatureBytes = hexToBytes(signature);
-  const recoveryBit = fullSignatureBytes[0];
-  const signatureBytes = fullSignatureBytes.slice(1);
-
-  return secp.recoverPublicKey(hash, signatureBytes, recoveryBit);
-};
 
 const balances = {
   "0403c9d7a8b5ecf43223092bc7268121a65d2c8d100dbc4d080806822f3f4e014b413d282f5d073a830c950b6abffa90b4b20fb398b9c9d9d8a4b96e518113f4a7": 100,

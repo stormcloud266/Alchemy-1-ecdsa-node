@@ -31,17 +31,9 @@ export const hashMessage = (msg) => {
 };
 
 export const signMessage = async (message, privateKey) => {
-  // const [sig, recoveryBit] = await secp.sign(hashMessage(msg), privateKey, {
-  //   recovered: true,
-  // });
-  // const signature = new Uint8Array([recoveryBit, ...sig]);
-  // return toHex(signature);
-
   const hash = hashMessage(message);
-
   const [signature, recoveryBit] = await secp.sign(hash, privateKey, {
     recovered: true,
   });
-  const fullSignature = new Uint8Array([recoveryBit, ...signature]);
-  return toHex(fullSignature);
+  return toHex(new Uint8Array([recoveryBit, ...signature]));
 };
